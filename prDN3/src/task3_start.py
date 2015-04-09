@@ -86,7 +86,7 @@ for i in range(k):
 avg_by_genre = UG.mean(axis=0)
 # print MPG.shape
 # print avg_by_genre
-# print UG.shape
+print UG.shape
 avg_per_cluster = []
 for i in range(k):
     avg_per_cluster.append(UG[cluster_indices[i],:].mean(axis=0))
@@ -95,14 +95,21 @@ for i in avg_per_cluster:
     avg_all.append(i/avg_by_genre)
 # print the max values
 # question 1.b answer
+max_genre = []
 for i in avg_all:
-    print max(i), i.argmin()
+    max_genre.append({i.argmin():max(i)})
 
+print max_genre
 #avg_per_genre = D.sum(axis=1).astype(int) / MPG
 #print avg_per_genre
 
 combination = list(combinations(range(k), 2))
-print combination
+
+for i in combination:
+    plt.figure()
+    # plt.colors(["b", "y", "r", "g"])
+    plt.plot(UG[:,max_genre[i[0]].keys()], UG[:,max_genre[i[1]].keys()], "bo")
+    plt.show()
 
 
 # ###########

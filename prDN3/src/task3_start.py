@@ -105,10 +105,11 @@ print max_genre
 
 combination = list(combinations(range(k), 2))
 
+colors = ["r", "b", "g", "y"]
 for i in combination:
     plt.figure()
     # plt.colors(["b", "y", "r", "g"])
-    plt.plot(UG[:,max_genre[i[0]].keys()], UG[:,max_genre[i[1]].keys()], "bo")
+    plt.plot(UG[:,max_genre[i[0]].keys()], UG[:,max_genre[i[1]].keys()], ".", color=colors)
     plt.show()
 
 

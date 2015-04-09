@@ -101,6 +101,9 @@ for i in avg_all:
 #avg_per_genre = D.sum(axis=1).astype(int) / MPG
 #print avg_per_genre
 
+combination = list(combinations(range(k), 2))
+print combination
+
 
 # ###########
 # #  PART 2 #

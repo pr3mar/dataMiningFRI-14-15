@@ -79,21 +79,20 @@ y = model.fit_predict(UG)
 appearance = np.bincount(y)
 # question 1.a answer
 print appearance
+
 # 1.b code
 cluster_indices = []
 for i in range(k):
     cluster_indices.append(np.where(y == i)[0])
 avg_by_genre = UG.mean(axis=0)
 
-# print MPG.shape
-# print avg_by_genre
-# print UG.shape
 avg_per_cluster = []
 for i in range(k):
     avg_per_cluster.append(UG[cluster_indices[i],:].mean(axis=0))
 avg_all = []
 for i in avg_per_cluster:
     avg_all.append(i/avg_by_genre)
+
 # print the max values
 # question 1.b answer
 max_genre = []
@@ -101,19 +100,13 @@ for i in avg_all:
     max_genre.append({i.argmin():max(i)})
 
 print max_genre
-#avg_per_genre = D.sum(axis=1).astype(int) / MPG
-#print avg_per_genre
 
+# 1.c code and answer
 combination = list(combinations(range(k), 2))
-
 color = {0:"b", 1:"y", 2:"r", 3:"g" }
-#colors = ["b", "g", "r", "y"]
 colors = []
 for i in y:
     colors.append(color[i])
-
-# print y.shape[0]
-# print UG.shape[0]
 for i in combination:
     movieX = max_genre[i[0]].keys()[0]
     movieY = max_genre[i[1]].keys()[0]
@@ -122,6 +115,9 @@ for i in combination:
     plt.ylabel(Itab.domain[movieY].name)
     plt.scatter(UG[:, movieX], UG[:, movieY], c=colors, s=50.0, edgecolors='none')
     plt.show()
+
+# question 1.d
+
 
 # ###########
 # #  PART 2 #

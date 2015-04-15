@@ -84,6 +84,7 @@ cluster_indices = []
 for i in range(k):
     cluster_indices.append(np.where(y == i)[0])
 avg_by_genre = UG.mean(axis=0)
+
 # print MPG.shape
 # print avg_by_genre
 print UG.shape
@@ -105,13 +106,23 @@ print max_genre
 
 combination = list(combinations(range(k), 2))
 
-colors = ["r", "b", "g", "y"]
+#color = {0:"b", 1:"y", 2:"r", 3:"g" }
+colors = ["b", "g", "r", "y"]
+
+print y.shape[0]
+print UG.shape[0]
 for i in combination:
     plt.figure()
-    # plt.colors(["b", "y", "r", "g"])
-    plt.plot(UG[:,max_genre[i[0]].keys()], UG[:,max_genre[i[1]].keys()], ".", color=colors)
+    #plt.colors(["b", "y", "r", "g"])
+    #kako dolociti barvo?
+    #for user in range(UG.shape[0]):
+        #print y[user], "[",max_genre[i[0]].keys()[0],",", max_genre[i[1]].keys()[0],"]"
+        #print "[", UG[user,max_genre[i[0]].keys()[0]], ",", UG[user,max_genre[i[1]].keys()[0]], "]",
+        #plt.plot(UG[user,max_genre[i[0]].keys()[0]], UG[user,max_genre[i[1]].keys()[0]])#, color=colors[y[user]])
+    #print UG[:,max_genre[i[0]].keys()[0]], UG[:,max_genre[i[1]].keys()[0]]
+    plt.scatter(UG[:,max_genre[i[0]].keys()[0]], UG[:,max_genre[i[1]].keys()[0]], c=(y + 1))
     plt.show()
-
+    print
 
 # ###########
 # #  PART 2 #

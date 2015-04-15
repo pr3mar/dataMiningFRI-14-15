@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from scipy.cluster.hierarchy import linkage, dendrogram
 from itertools import combinations
+import math
 
 
 def count(data, value):
@@ -101,38 +102,50 @@ for i in avg_all:
 
 print max_genre
 
-# 1.c code and answer
-combination = list(combinations(range(k), 2))
-color = {0:"b", 1:"y", 2:"r", 3:"g" }
-colors = []
-for i in y:
-    colors.append(color[i])
-for i in combination:
-    movieX = max_genre[i[0]].keys()[0]
-    movieY = max_genre[i[1]].keys()[0]
-    plt.figure()
-    plt.xlabel(Itab.domain[movieX].name)
-    plt.ylabel(Itab.domain[movieY].name)
-    plt.scatter(UG[:, movieX], UG[:, movieY], c=colors, s=50.0, edgecolors='none')
-    plt.show()
+# # 1.c code and answer
+# combination = list(combinations(range(k), 2))
+# color = {0:"b", 1:"y", 2:"r", 3:"g" }
+# colors = []
+# for i in y:
+#     colors.append(color[i])
+# for i in combination:
+#     movieX = max_genre[i[0]].keys()[0]
+#     movieY = max_genre[i[1]].keys()[0]
+#     genreX = Itab.domain[movieX].name
+#     genreY = Itab.domain[movieY].name
+#     fig = plt.figure()
+#     plt.xlabel(genreX)
+#     plt.ylabel(genreY)
+#     plt.scatter(UG[:, movieX], UG[:, movieY], c=colors, s=50.0, edgecolors='none')
+#     fname = "../pics/kmeans_porazdelitev_" + genreX + "_" + genreY + "_63130345.png"
+#     plt.savefig(fname)
+#     plt.close(fig)
 
 # question 1.d
 
 
-# ###########
-# #  PART 2 #
-# ###########
-#
-# # Select movies with at least 250 views
-# # Their indices are in inxs
-# T = 250
-# inxs = map(int, np.where((D > 0).sum(axis=0) > T)[0])
-# n = len(inxs)
-# print "Number of movies: ", n
-#
-# # YOUR CODE HERE
 
+###########
+#  PART 2 #
+###########
 
+# Select movies with at least 250 views
+# Their indices are in inxs
+T = 250
+inxs = map(int, np.where((D > 0).sum(axis=0) > T)[0])
+n = len(inxs)
+print "Number of movies: ", n
 
+# YOUR CODE HERE
 
+movies = D[inxs,:]
+Distances = np.zeros([movies.shape[0], movies.shape[0]])
+print Distances.shape
+for i in range(movies.shape[0]):
+    for j in range(i, movies.shape[0]):
+        tmp = np.sqrt(np.sum((D[i] - D[j])**2))
+        Distances[i,j] = tmp
 
+L = linkage(D)
+dend = dendrogram(L)
+plt.show()

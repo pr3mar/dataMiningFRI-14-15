@@ -87,7 +87,7 @@ avg_by_genre = UG.mean(axis=0)
 
 # print MPG.shape
 # print avg_by_genre
-print UG.shape
+# print UG.shape
 avg_per_cluster = []
 for i in range(k):
     avg_per_cluster.append(UG[cluster_indices[i],:].mean(axis=0))
@@ -112,11 +112,15 @@ colors = []
 for i in y:
     colors.append(color[i])
 
-print y.shape[0]
-print UG.shape[0]
+# print y.shape[0]
+# print UG.shape[0]
 for i in combination:
+    movieX = max_genre[i[0]].keys()[0]
+    movieY = max_genre[i[1]].keys()[0]
     plt.figure()
-    plt.scatter(UG[:,max_genre[i[0]].keys()[0]], UG[:,max_genre[i[1]].keys()[0]], c=colors, s=50.0, edgecolors='none')
+    plt.xlabel(Itab.domain[movieX].name)
+    plt.ylabel(Itab.domain[movieY].name)
+    plt.scatter(UG[:, movieX], UG[:, movieY], c=colors, s=50.0, edgecolors='none')
     plt.show()
 
 # ###########

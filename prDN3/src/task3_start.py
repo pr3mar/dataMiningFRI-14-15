@@ -106,23 +106,18 @@ print max_genre
 
 combination = list(combinations(range(k), 2))
 
-#color = {0:"b", 1:"y", 2:"r", 3:"g" }
-colors = ["b", "g", "r", "y"]
+color = {0:"b", 1:"y", 2:"r", 3:"g" }
+#colors = ["b", "g", "r", "y"]
+colors = []
+for i in y:
+    colors.append(color[i])
 
 print y.shape[0]
 print UG.shape[0]
 for i in combination:
     plt.figure()
-    #plt.colors(["b", "y", "r", "g"])
-    #kako dolociti barvo?
-    #for user in range(UG.shape[0]):
-        #print y[user], "[",max_genre[i[0]].keys()[0],",", max_genre[i[1]].keys()[0],"]"
-        #print "[", UG[user,max_genre[i[0]].keys()[0]], ",", UG[user,max_genre[i[1]].keys()[0]], "]",
-        #plt.plot(UG[user,max_genre[i[0]].keys()[0]], UG[user,max_genre[i[1]].keys()[0]])#, color=colors[y[user]])
-    #print UG[:,max_genre[i[0]].keys()[0]], UG[:,max_genre[i[1]].keys()[0]]
-    plt.scatter(UG[:,max_genre[i[0]].keys()[0]], UG[:,max_genre[i[1]].keys()[0]], c=(y + 1))
+    plt.scatter(UG[:,max_genre[i[0]].keys()[0]], UG[:,max_genre[i[1]].keys()[0]], c=colors, s=50.0, edgecolors='none')
     plt.show()
-    print
 
 # ###########
 # #  PART 2 #

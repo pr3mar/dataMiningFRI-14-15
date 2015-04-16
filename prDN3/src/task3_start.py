@@ -188,7 +188,6 @@ for i in range(k):
     print "gender"
     for v,k in gender_cluster.items():
         print "%s = %.3f, " % (v, k/len(cluster_indices[i]))
-    print
     # rez_gender = []
     # rez_gender_ = []
     # for k,v in gender_cluster.items():
@@ -205,6 +204,7 @@ for i in range(k):
         # print Utab[j][0], Utab[j][0] // 10 #,  i[0] % 10
         age_cluster[Utab[j][0] // 10] += 1
     print "age", age_cluster
+    print
 
 ###########
 #  PART

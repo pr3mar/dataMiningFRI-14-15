@@ -1,3 +1,5 @@
+from __future__ import division
+from pandas.compat import lzip
 try:
     import sys
     sys.path.remove(filter(lambda e: "orange3" in e, sys.path)[0])
@@ -13,7 +15,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from scipy.cluster.hierarchy import linkage, dendrogram
 from itertools import combinations
-import math
+
 
 
 def count(data, value):
@@ -102,31 +104,111 @@ for i in avg_all:
 
 print max_genre
 
-# # 1.c code and answer
-# combination = list(combinations(range(k), 2))
-# color = {0:"b", 1:"y", 2:"r", 3:"g" }
-# colors = []
-# for i in y:
-#     colors.append(color[i])
-# for i in combination:
-#     movieX = max_genre[i[0]].keys()[0]
-#     movieY = max_genre[i[1]].keys()[0]
-#     genreX = Itab.domain[movieX].name
-#     genreY = Itab.domain[movieY].name
-#     fig = plt.figure()
-#     plt.xlabel(genreX)
-#     plt.ylabel(genreY)
-#     plt.scatter(UG[:, movieX], UG[:, movieY], c=colors, s=50.0, edgecolors='none')
-#     fname = "../pics/kmeans_porazdelitev_" + genreX + "_" + genreY + "_63130345.png"
-#     plt.savefig(fname)
-#     plt.close(fig)
+# 1.c code and answer
+combination = list(combinations(range(k), 2))
+color = {0:"b", 1:"y", 2:"r", 3:"g" }
+colors = []
+for i in y:
+    colors.append(color[i])
+for i in combination:
+    movieX = max_genre[i[0]].keys()[0]
+    movieY = max_genre[i[1]].keys()[0]
+    genreX = Itab.domain[movieX].name
+    genreY = Itab.domain[movieY].name
+    fig = plt.figure()
+    plt.xlabel(genreX)
+    plt.ylabel(genreY)
+    plt.scatter(UG[:, movieX], UG[:, movieY], c=colors, s=50.0, edgecolors='none')
+    fname = "../pics/kmeans_porazdelitev_" + genreX + "_" + genreY + "_63130345.png"
+    plt.savefig(fname)
+    plt.close(fig)
 
 # question 1.d
+# occupation
+occupation =  Utab.domain["occupation"]
+occupation_per_cluster = []
+occupation_data_set = {}
+for j in occupation:
+    occupation_data_set[j.value] = 0
+for i in Utab[:]:
+    occupation_data_set[i[2].value] += 1
+results_per_sluster = []
+results_per_sluster_proff = []
+# print "occupation data set:"
+# print occupation_data_set
 
+# gender
+gender = Utab.domain["gender"]
+gender_data_set = {}
+for j in gender:
+    gender_data_set[j.value] = 0
+for i in Utab[:]:
+    gender_data_set[i[1].value] += 1
 
+# age
+age = Utab.domain["age"]
+age_data_set = {}
+for i in range(10):
+    age_data_set[i] = 0
+for i in Utab[:]:
+    #print i[0], i[0] // 10,  i[0] % 10
+    age_data_set[i[0] // 10] += 1
+print "age:"
+print age_data_set
+
+for i in range(k):
+    print "cluster", i + 1
+    # occupation
+    cluster = {}
+    for j in occupation:
+        cluster[j.value] = 0
+    for j in cluster_indices[i]:
+        cluster[Utab[j][2].value] += 1
+    rez = []
+    rez_prof = []
+    for k, v in cluster.items():
+        # print v, occupation_data_set[k]
+        rez.append(v/occupation_data_set[k])
+        rez_prof.append(k)
+    print len(cluster_indices[i])
+    occupation_per_cluster.append(cluster)
+    sorted_lists = sorted(lzip(rez, rez_prof), reverse=True, key=lambda x: x[0])
+    rez, rez_prof = [[x[p] for x in sorted_lists] for p in range(2)]
+    for j in range(3):
+        print "%.3f %s" % (rez[j], rez_prof[j])
+    results_per_sluster.append(rez)
+    results_per_sluster_proff.append(rez_prof)
+
+    # gender
+    gender_cluster = {}
+    for j in gender:
+        gender_cluster[j.value] = 0
+    for j in cluster_indices[i]:
+        gender_cluster[Utab[j][1].value] += 1
+    print "gender"
+    for v,k in gender_cluster.items():
+        print "%s = %.3f, " % (v, k/len(cluster_indices[i]))
+    print
+    # rez_gender = []
+    # rez_gender_ = []
+    # for k,v in gender_cluster.items():
+    #     rez_gender.append(v/gender_data_set[k])
+    #     rez_gender_.append(k)
+    # for j in range(2):
+    #     print "%.3f %s" % (rez_gender[j], rez_gender_[j])
+
+    #age
+    age_cluster = {}
+    for j in range(10):
+        age_cluster[j] = 0
+    for j in cluster_indices[i]:
+        # print Utab[j][0], Utab[j][0] // 10 #,  i[0] % 10
+        age_cluster[Utab[j][0] // 10] += 1
+    print "age", age_cluster
 
 ###########
-#  PART 2 #
+#  PART
+# 2 #
 ###########
 
 # Select movies with at least 250 views
@@ -138,21 +220,42 @@ print "Number of movies: ", n
 
 # YOUR CODE HERE
 from itertools import product
+avg_movies = np.average(D, axis=1, weights=D.astype(bool))
+#print avg_movies.shape
+#print avg_movies
+movies = D[inxs,:].T
+zero_vals = np.array(np.where(movies == 0))
+print zero_vals.shape
 
-movies = D[inxs,:]
-n = len(movies)
+# for i in range(939):
+#     print avg_movies[i]
+#     for j in range(68):
+#         print movies[i,j],
+#     print
+
+for i in range(939):
+    for j in range(68):
+        if movies[i,j] == 0:
+            movies[i,j] = avg_movies[i]
+
+# for i in range(939):
+#     print avg_movies[i]
+#     for j in range(68):
+#         print movies[i,j],
+#     print
+
 Distances = np.zeros((n, n))
 euc = lambda x, y: np.sqrt(np.sum((x-y)**2))
 for i, j in product(range(n), range(n)):
-    xi = D[i]
-    xj = D[j]
+    xi = movies[i]
+    xj = movies[j]
     Distances[i, j] = euc(xi, xj)
 
 names = []
 for inst in inxs:
     names.append(Dtab.domain[inst].name)
 
-L = linkage(Distances)
+L = linkage(Distances, method="average")
 plt.figure()
 dend = dendrogram(L)
 leaves = dend["leaves"]

@@ -101,7 +101,6 @@ for i in avg_per_cluster:
 max_genre = []
 for i in avg_all:
     max_genre.append({i.argmin():max(i)})
-
 print max_genre
 
 # 1.c code and answer
@@ -166,10 +165,10 @@ for i in range(k):
         cluster[Utab[j][2].value] += 1
     rez = []
     rez_prof = []
-    for k, v in cluster.items():
+    for key, v in cluster.items():
         # print v, occupation_data_set[k]
-        rez.append(v/occupation_data_set[k])
-        rez_prof.append(k)
+        rez.append(v/occupation_data_set[key])
+        rez_prof.append(key)
     print len(cluster_indices[i])
     occupation_per_cluster.append(cluster)
     sorted_lists = sorted(lzip(rez, rez_prof), reverse=True, key=lambda x: x[0])
@@ -186,13 +185,13 @@ for i in range(k):
     for j in cluster_indices[i]:
         gender_cluster[Utab[j][1].value] += 1
     print "gender"
-    for v,k in gender_cluster.items():
-        print "%s = %.3f, " % (v, k/len(cluster_indices[i]))
+    for v,key in gender_cluster.items():
+        print "%s = %.3f, " % (v, key/len(cluster_indices[i]))
     # rez_gender = []
     # rez_gender_ = []
-    # for k,v in gender_cluster.items():
-    #     rez_gender.append(v/gender_data_set[k])
-    #     rez_gender_.append(k)
+    # for key,v in gender_cluster.items():
+    #     rez_gender.append(v/gender_data_set[key])
+    #     rez_gender_.append(key)
     # for j in range(2):
     #     print "%.3f %s" % (rez_gender[j], rez_gender_[j])
 

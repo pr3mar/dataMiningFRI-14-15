@@ -137,15 +137,25 @@ n = len(inxs)
 print "Number of movies: ", n
 
 # YOUR CODE HERE
+from itertools import product
 
 movies = D[inxs,:]
-Distances = np.zeros([movies.shape[0], movies.shape[0]])
-print Distances.shape
-for i in range(movies.shape[0]):
-    for j in range(i, movies.shape[0]):
-        tmp = np.sqrt(np.sum((D[i] - D[j])**2))
-        Distances[i,j] = tmp
+n = len(movies)
+Distances = np.zeros((n, n))
+euc = lambda x, y: np.sqrt(np.sum((x-y)**2))
+for i, j in product(range(n), range(n)):
+    xi = D[i]
+    xj = D[j]
+    Distances[i, j] = euc(xi, xj)
 
-L = linkage(D)
+names = []
+for inst in inxs:
+    names.append(Dtab.domain[inst].name)
+
+L = linkage(Distances)
+plt.figure()
 dend = dendrogram(L)
+leaves = dend["leaves"]
+plt.gca().set_xticklabels([names[i] for i in leaves])
+#plt.savefig("../pics/dendrogram_63130345.svg")
 plt.show()

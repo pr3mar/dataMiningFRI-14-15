@@ -1,6 +1,6 @@
 unknown	Action	Adventure	Animation	Childrens	Comedy	Crime	Documentary	Drama	Fantasy	Film-Noir	Horror	Musical	Mystery	Romance	Sci-Fi	Thriller	War	Western	movie id	movie title	release date	video release date	IMDb URL
 string	0 1 0.0 1.0	0 1	0 1	0 1	0 1 0.0 1.0	0 1	0 1	0 1 0.0 1.0	0 1	0 1	0 1	0 1	0 1	0 1	0 1	0 1	0 1	0 1	string	string	string	string	string
-																			meta	meta	meta	meta	meta
+meta																			meta	meta	meta	meta	meta
 0	0	0	1	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	movie_1	Toy Story (1995)	01-Jan-1995	?	http://us.imdb.com/M/title-exact?Toy%20Story%20(1995)
 0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	movie_2	GoldenEye (1995)	01-Jan-1995	?	http://us.imdb.com/M/title-exact?GoldenEye%20(1995)
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	movie_3	Four Rooms (1995)	01-Jan-1995	?	http://us.imdb.com/M/title-exact?Four%20Rooms%20(1995)
@@ -498,7 +498,7 @@ string	0 1 0.0 1.0	0 1	0 1	0 1	0 1 0.0 1.0	0 1	0 1	0 1 0.0 1.0	0 1	0 1	0 1	0 1	0
 0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	movie_540	Money Train (1995)	01-Jan-1995	?	http://us.imdb.com/M/title-exact?Money%20Train%20(1995)
 0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	movie_541	Mortal Kombat (1995)	01-Jan-1995	?	http://us.imdb.com/M/title-exact?Mortal%20Kombat%20(1995)
 0	0	0	1	1	0	0	0	0	0	0	0	1	0	1	0	0	0	0	movie_542	Pocahontas (1995)	01-Jan-1995	?	http://us.imdb.com/M/title-exact?Pocahontas%20(1995)
-0	0	0	0	0	0	0	0	1	0	0	0	1	0	0	0	0	0	0	movie_543	Misérables, Les (1995)	01-Jan-1995	?	http://us.imdb.com/M/title-exact?Mis%E9rables%2C%20Les%20%281995%29
+0	0	0	0	0	0	0	0	1	0	0	0	1	0	0	0	0	0	0	movie_543	Misï¿½rables, Les (1995)	01-Jan-1995	?	http://us.imdb.com/M/title-exact?Mis%E9rables%2C%20Les%20%281995%29
 0	0	0	0	0	0	1	0	1	0	0	0	0	0	1	0	0	0	0	movie_544	Things to Do in Denver when You're Dead (1995)	02-Feb-1996	?	http://us.imdb.com/M/title-exact?Things%20to%20Do%20in%20Denver%20when%20You're%20Dead%20(1995)
 0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	movie_546	Broken Arrow (1996)	09-Feb-1996	?	http://us.imdb.com/M/title-exact?Broken%20Arrow%20(1996)
 0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	movie_547	Young Poisoner's Handbook, The (1995)	23-Feb-1996	?	http://us.imdb.com/M/title-exact?Young%20Poisoner's%20Handbook,%20The%20(1995)
@@ -826,7 +826,7 @@ string	0 1 0.0 1.0	0 1	0 1	0 1	0 1 0.0 1.0	0 1	0 1	0 1 0.0 1.0	0 1	0 1	0 1	0 1	0
 0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	movie_991	Keys to Tulsa (1997)	11-Apr-1997	?	http://us.imdb.com/Title?Keys+to+Tulsa+(1997)
 0	0	1	1	1	1	0	0	0	0	0	0	1	0	0	0	0	0	0	movie_993	Hercules (1997)	27-Jun-1997	?	http://us.imdb.com/M/title-exact?Hercules+(1997)
 0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	movie_995	Kiss Me, Guido (1997)	01-Jan-1997	?	http://us.imdb.com/M/title-exact?Kiss+Me%2C+Guido+(1997)
-0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	movie_1005	Double vie de Véronique, La (Double Life of Veronique, The) (1991)	01-Jan-1991	?	http://us.imdb.com/M/title-exact?Podwojne%20zycie%20Weroniki%20(1991)
+0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	movie_1005	Double vie de Vï¿½ronique, La (Double Life of Veronique, The) (1991)	01-Jan-1991	?	http://us.imdb.com/M/title-exact?Podwojne%20zycie%20Weroniki%20(1991)
 0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	movie_1006	Until the End of the World (Bis ans Ende der Welt) (1991)	01-Jan-1991	?	http://us.imdb.com/M/title-exact?Bis%20ans%20Ende%20der%20Welt%20(1991)
 0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	movie_1007	Waiting for Guffman (1996)	31-Jan-1997	?	http://us.imdb.com/M/title-exact?Waiting%20for%20Guffman%20(1996)
 0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	movie_1008	I Shot Andy Warhol (1996)	01-May-1996	?	http://us.imdb.com/M/title-exact?I%20Shot%20Andy%20Warhol%20(1996)

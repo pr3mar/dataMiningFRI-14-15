@@ -125,25 +125,25 @@ for t in tau:
 
                 model = DecisionTreeClassifier() # 5 neighbours (change it.)
                 prediction = model.fit(train_set, train_set_labels).predict(test_set)
-                kn_precision += precision_score(test_set_labels, prediction)
-                kn_recall += recall_score(test_set_labels, prediction)
-                kn_area += roc_auc_score(test_set_labels, prediction)
+                dt_precision += precision_score(test_set_labels, prediction)
+                dt_recall += recall_score(test_set_labels, prediction)
+                dt_area += roc_auc_score(test_set_labels, prediction)
 
             avgs[0][0].append(majority_precision/j)
             avgs[0][1].append(majority_recall/j)
             avgs[0][2].append(majority_area/j)
 
-            avgs[1][0].append(majority_precision/j)
-            avgs[1][1].append(majority_recall/j)
-            avgs[1][2].append(majority_area/j)
+            avgs[1][0].append(bayes_precision/j)
+            avgs[1][1].append(bayes_recall/j)
+            avgs[1][2].append(bayes_area/j)
 
-            avgs[2][0].append(majority_precision/j)
-            avgs[2][1].append(majority_recall/j)
-            avgs[2][2].append(majority_area/j)
+            avgs[2][0].append(kn_precision/j)
+            avgs[2][1].append(kn_recall/j)
+            avgs[2][2].append(kn_area/j)
 
-            avgs[3][0].append(majority_precision/j)
-            avgs[3][1].append(majority_recall/j)
-            avgs[3][2].append(majority_area/j)
+            avgs[3][0].append(dt_precision/j)
+            avgs[3][1].append(dt_recall/j)
+            avgs[3][2].append(dt_area/j)
         except:
             pass
             # avgs[0].append(0)

@@ -62,6 +62,12 @@ class Majority:
 i = 0     # Randomly choose a user on index 302
 tau = [2, 3, 4]
 for t in tau:
+    avgs = [
+        [[], [], []],
+        [[], [], []],
+        [[], [], []],
+        [[], [], []]
+    ]
     for i in range(U.shape[0]):
         X = np.hstack([D[:i, :].T, D[i+1:, :].T])   # Attributes are all other users
         y = np.hstack([D[i, :]])  # Class labels are movie ratings of user 301
@@ -69,27 +75,89 @@ for t in tau:
         X = X[index_set, :]     # Training data - attributes
         y = y[index_set]     # Training data - class labels
         try:
-            split = StratifiedShuffleSplit(y, test_size=0.1)
+            split = StratifiedShuffleSplit(y, test_size=0.1, train_size=0.9)
             # Set threshold to convert rating to two classes;
             # Ratings > tau are considered as "Like" (class 1) and otherwise as "Unlike" (class 0)
             y = y > t
+            j = 0
+            majority_precision = 0
+            majority_recall = 0
+            majority_area = 0
+
+            bayes_precision = 0
+            bayes_recall = 0
+            bayes_area = 0
+
+            kn_precision = 0
+            kn_recall = 0
+            kn_area = 0
+
+            dt_precision = 0
+            dt_recall = 0
+            dt_area = 0
             for train_indice, test_indice in split:
+                j += 1
                 # Sample usage of models
                 train_set = X[train_indice, :]
                 train_set_labels = y[train_indice]
                 test_set = X[test_indice, :]
                 test_set_labels = y[test_indice]
+
                 model = Majority()
                 model.fit(train_set, train_set_labels)                 # Train model on all data
                 prediction = model.predict(test_set)   # Predict the same training data
-                precision = precision_score(test_set_labels, prediction)   # Measure precision score
-                recall = recall_score(test_set_labels, prediction)   # Measure precision score
-                area = roc_auc_score(test_set_labels, prediction)   # Measure precision score
-                print "[t = %i] precision: %f, recall: %f, area: %f" % (t, precision, recall, area)
+                majority_precision += precision_score(test_set_labels, prediction)   # Measure precision score
+                majority_recall += recall_score(test_set_labels, prediction)   # Measure precision score
+                majority_area += roc_auc_score(test_set_labels, prediction)   # Measure precision score
+
+                model = GaussianNB()
+                prediction = model.fit(train_set, train_set_labels).predict(test_set)
+                bayes_precision += precision_score(test_set_labels, prediction)
+                bayes_recall += recall_score(test_set_labels, prediction)
+                bayes_area += roc_auc_score(test_set_labels, prediction)
+
+                model = KNeighborsClassifier() # 5 neighbours (change it.)
+                model.fit(train_set, train_set_labels)
+                prediction = model.predict(test_set)
+                kn_precision += precision_score(test_set_labels, prediction)
+                kn_recall += recall_score(test_set_labels, prediction)
+                kn_area += roc_auc_score(test_set_labels, prediction)
+
+                model = DecisionTreeClassifier() # 5 neighbours (change it.)
+                prediction = model.fit(train_set, train_set_labels).predict(test_set)
+                kn_precision += precision_score(test_set_labels, prediction)
+                kn_recall += recall_score(test_set_labels, prediction)
+                kn_area += roc_auc_score(test_set_labels, prediction)
+
+            avgs[0][0].append(majority_precision/j)
+            avgs[0][1].append(majority_recall/j)
+            avgs[0][2].append(majority_area/j)
+
+            avgs[1][0].append(majority_precision/j)
+            avgs[1][1].append(majority_recall/j)
+            avgs[1][2].append(majority_area/j)
+
+            avgs[2][0].append(majority_precision/j)
+            avgs[2][1].append(majority_recall/j)
+            avgs[2][2].append(majority_area/j)
+
+            avgs[3][0].append(majority_precision/j)
+            avgs[3][1].append(majority_recall/j)
+            avgs[3][2].append(majority_area/j)
         except:
             pass
-
-
+            # avgs[0].append(0)
+            # avgs[1].append(0)
+            # avgs[2].append(0)
+    for i in avgs:
+        print "t = ", t,
+        for j in i:
+            try:
+                print sum(j)/len(j),
+            except:
+                print 0,
+        print
+    print
 # #######################
 # # Sample code: PART 2 #
 # #######################

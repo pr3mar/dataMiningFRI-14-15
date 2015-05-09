@@ -56,91 +56,93 @@ def printData(data, file):
             print j,
         print
     sys.stdout = sys.__stdout__
-def getClasses():
+
+def getClasses(t):
     tau = [2, 3, 4]
-    for t in tau:
-        avgs = [
-            [[], [], []],
-            [[], [], []],
-            [[], [], []],
-            [[], [], []]
-        ]
-        user = 0
-        for i in range(U.shape[0]):
-            X = np.hstack([D[:i, :].T, D[i+1:, :].T])   # Attributes are all other users
-            y = np.hstack([D[i, :]])  # Class labels are movie ratings of user 301
-            index_set = np.where(y > 0)[0]  # Select only the movies that user watched
-            X = X[index_set, :]     # Training data - attributes
-            y = y[index_set]     # Training data - class labels
-            print user
-            try:
-                split = StratifiedShuffleSplit(y, test_size=0.1, train_size=0.9)
-                y = y > t
-                majority_precision = 0
-                majority_recall = 0
-                majority_area = 0
+    avgs = [
+        [[], [], []],
+        [[], [], []],
+        [[], [], []],
+        [[], [], []]
+    ]
+    user = 0
+    for i in range(U.shape[0]):
+        X = np.hstack([D[:i, :].T, D[i+1:, :].T])   # Attributes are all other users
+        y = np.hstack([D[i, :]])  # Class labels are movie ratings of user 301
+        index_set = np.where(y > 0)[0]  # Select only the movies that user watched
+        X = X[index_set, :]     # Training data - attributes
+        y = y[index_set]     # Training data - class labels
+        # print user
+        try:
+            split = StratifiedShuffleSplit(y, test_size=0.1, train_size=0.9)
+            y = y > t
+            majority_precision = 0
+            majority_recall = 0
+            majority_area = 0
 
-                bayes_precision = 0
-                bayes_recall = 0
-                bayes_area = 0
+            bayes_precision = 0
+            bayes_recall = 0
+            bayes_area = 0
 
-                kn_precision = 0
-                kn_recall = 0
-                kn_area = 0
+            kn_precision = 0
+            kn_recall = 0
+            kn_area = 0
 
-                dt_precision = 0
-                dt_recall = 0
-                dt_area = 0
-                j = 0
-                for train_indice, test_indice in split:
-                    j += 1
-                    train_set = X[train_indice, :]
-                    train_set_labels = y[train_indice]
-                    test_set = X[test_indice, :]
-                    test_set_labels = y[test_indice]
+            dt_precision = 0
+            dt_recall = 0
+            dt_area = 0
+            j = 0
+            for train_indice, test_indice in split:
+                j += 1
+                train_set = X[train_indice, :]
+                train_set_labels = y[train_indice]
+                test_set = X[test_indice, :]
+                test_set_labels = y[test_indice]
 
-                    model = Majority()
-                    model.fit(train_set, train_set_labels)
-                    prediction = model.predict(test_set)
-                    majority_precision += precision_score(test_set_labels, prediction)
-                    majority_recall += recall_score(test_set_labels, prediction)
-                    majority_area += roc_auc_score(test_set_labels, prediction)
+                model = Majority()
+                model.fit(train_set, train_set_labels)
+                prediction = model.predict(test_set)
+                majority_precision += precision_score(test_set_labels, prediction)
+                majority_recall += recall_score(test_set_labels, prediction)
+                majority_area += roc_auc_score(test_set_labels, prediction)
 
-                    model = GaussianNB()
-                    prediction = model.fit(train_set, train_set_labels).predict(test_set)
-                    bayes_precision += precision_score(test_set_labels, prediction)
-                    bayes_recall += recall_score(test_set_labels, prediction)
-                    bayes_area += roc_auc_score(test_set_labels, prediction)
+                model = GaussianNB()
+                prediction = model.fit(train_set, train_set_labels).predict(test_set)
+                bayes_precision += precision_score(test_set_labels, prediction)
+                bayes_recall += recall_score(test_set_labels, prediction)
+                bayes_area += roc_auc_score(test_set_labels, prediction)
 
-                    model = KNeighborsClassifier()
-                    model.fit(train_set, train_set_labels)
-                    prediction = model.predict(test_set)
-                    kn_precision += precision_score(test_set_labels, prediction)
-                    kn_recall += recall_score(test_set_labels, prediction)
-                    kn_area += roc_auc_score(test_set_labels, prediction)
+                model = KNeighborsClassifier()
+                model.fit(train_set, train_set_labels)
+                prediction = model.predict(test_set)
+                kn_precision += precision_score(test_set_labels, prediction)
+                kn_recall += recall_score(test_set_labels, prediction)
+                kn_area += roc_auc_score(test_set_labels, prediction)
 
-                    model = DecisionTreeClassifier()
-                    prediction = model.fit(train_set, train_set_labels).predict(test_set)
-                    dt_precision += precision_score(test_set_labels, prediction)
-                    dt_recall += recall_score(test_set_labels, prediction)
-                    dt_area += roc_auc_score(test_set_labels, prediction)
-                avgs[0][0].append(majority_precision/j)
-                avgs[0][1].append(majority_recall/j)
-                avgs[0][2].append(majority_area/j)
+                model = DecisionTreeClassifier()
+                prediction = model.fit(train_set, train_set_labels).predict(test_set)
+                dt_precision += precision_score(test_set_labels, prediction)
+                dt_recall += recall_score(test_set_labels, prediction)
+                dt_area += roc_auc_score(test_set_labels, prediction)
+            avgs[0][0].append(majority_precision/j)
+            avgs[0][1].append(majority_recall/j)
+            avgs[0][2].append(majority_area/j)
 
-                avgs[1][0].append(bayes_precision/j)
-                avgs[1][1].append(bayes_recall/j)
-                avgs[1][2].append(bayes_area/j)
+            avgs[1][0].append(bayes_precision/j)
+            avgs[1][1].append(bayes_recall/j)
+            avgs[1][2].append(bayes_area/j)
 
-                avgs[2][0].append(kn_precision/j)
-                avgs[2][1].append(kn_recall/j)
-                avgs[2][2].append(kn_area/j)
+            avgs[2][0].append(kn_precision/j)
+            avgs[2][1].append(kn_recall/j)
+            avgs[2][2].append(kn_area/j)
 
-                avgs[3][0].append(dt_precision/j)
-                avgs[3][1].append(dt_recall/j)
-                avgs[3][2].append(dt_area/j)
-            except:
-                pass
+            avgs[3][0].append(dt_precision/j)
+            avgs[3][1].append(dt_recall/j)
+            avgs[3][2].append(dt_area/j)
+        except:
+            pass
+        break
+    sys.stdout = open("../data/data_class_t" + str(t), "w")
     for i in avgs:
         print "t = ", t,
         for j in i:
@@ -149,6 +151,7 @@ def getClasses():
             except:
                 print 0,
         print
+    sys.stdout = sys.__stdout__
 
 def getNeighbours(t):
     kn_all = []
@@ -156,14 +159,14 @@ def getNeighbours(t):
     kn_users = np.zeros((3, len(neighbors)))
     kn_users = np.zeros((3, len(neighbors)))
     user = 0
-
+    count = 0
     for i in range(U.shape[0]):
         X = np.hstack([D[:i, :].T, D[i+1:, :].T])   # Attributes are all other users
         y = np.hstack([D[i, :]])  # Class labels are movie ratings of user 301
         index_set = np.where(y > 0)[0]  # Select only the movies that user watched
         X = X[index_set, :]     # Training data - attributes
         y = y[index_set]     # Training data - class labels
-        print "[t =", t, "], user = ", user
+        print "[t =", t, "], user = ", user, ", count", count
         try:
             split = StratifiedShuffleSplit(y, test_size=0.1, train_size=0.9)
             y = y > t
@@ -191,13 +194,14 @@ def getNeighbours(t):
         except:
             user -=1
         user += 1
+        count += 1
         # break
-    print "[t = ", t, "]altogether = ", user
+    print "[t = ", t, "] altogether = ", user
     for i in range(kn_users.shape[0]):
         for j in range(kn_users.shape[1]):
             kn_users[i, j] = kn_users[i,j]/user
     # kn_all.append(kn_users)
-    printData(kn_users, ("data_tau_" + str(t)))
+    printData(kn_users, ("../data/data_tau_" + str(t)))
     plt.figure()
     # print i.shape
     plt.title("t = " + str(t))
@@ -216,9 +220,10 @@ if __name__ == '__main__':
     pool = Pool(processes=20)
     start = time.clock()
     # getNeighbours(2)
+    pool.map(getClasses, range(2, 5))
     pool.map(getNeighbours, range(2, 5))
-    # getClasses()
-    print time.clock() - start
+    # getClasses(2)
+    print "time = ", time.clock() - start
 
 
 # #######################

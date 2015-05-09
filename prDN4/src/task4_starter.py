@@ -7,7 +7,7 @@ except:
 
 
 # Use as desired
-import Orange
+import Orange, time
 import numpy as np
 import matplotlib.pyplot as plt
 from itertools import combinations
@@ -32,8 +32,6 @@ print "I", I.shape
 print "D", D.shape
 print "C", C.shape
 
-
-
 # Implementation of a simple majority classifier for instructive purposes
 class Majority:
 
@@ -54,110 +52,218 @@ class Majority:
         """
         return np.ones((len(Xtest), )) * self.majority
 
+def printData(data):
+    for i in data:
+        for j in i:
+            for k in j:
+                print k,
+            print
+        print
+def getClasses():
+    # neighbors = [1, 2, 3, 5, 10, 20, 40, 80, 100]
+    tau = [2, 3, 4]
+    # kn_all = []
+    for t in tau:
+        avgs = [
+            [[], [], []],
+            [[], [], []],
+            [[], [], []],
+            [[], [], []]
+        ]
+        # kn_users = np.zeros((3, len(neighbors)))
+        user = 0
+        for i in range(U.shape[0]):
+            X = np.hstack([D[:i, :].T, D[i+1:, :].T])   # Attributes are all other users
+            y = np.hstack([D[i, :]])  # Class labels are movie ratings of user 301
+            index_set = np.where(y > 0)[0]  # Select only the movies that user watched
+            X = X[index_set, :]     # Training data - attributes
+            y = y[index_set]     # Training data - class labels
+            print user
+            try:
+                split = StratifiedShuffleSplit(y, test_size=0.1, train_size=0.9)
+                y = y > t
+                majority_precision = 0
+                majority_recall = 0
+                majority_area = 0
+
+                bayes_precision = 0
+                bayes_recall = 0
+                bayes_area = 0
+
+                kn_precision = 0
+                kn_recall = 0
+                kn_area = 0
+
+                dt_precision = 0
+                dt_recall = 0
+                dt_area = 0
+                # kn_local = np.zeros((3, len(neighbors)))
+                j = 0
+                for train_indice, test_indice in split:
+                    j += 1
+                    train_set = X[train_indice, :]
+                    train_set_labels = y[train_indice]
+                    test_set = X[test_indice, :]
+                    test_set_labels = y[test_indice]
+
+                    model = Majority()
+                    model.fit(train_set, train_set_labels)
+                    prediction = model.predict(test_set)
+                    majority_precision += precision_score(test_set_labels, prediction)
+                    majority_recall += recall_score(test_set_labels, prediction)
+                    majority_area += roc_auc_score(test_set_labels, prediction)
+
+                    model = GaussianNB()
+                    prediction = model.fit(train_set, train_set_labels).predict(test_set)
+                    bayes_precision += precision_score(test_set_labels, prediction)
+                    bayes_recall += recall_score(test_set_labels, prediction)
+                    bayes_area += roc_auc_score(test_set_labels, prediction)
+
+                    model = KNeighborsClassifier() # 5 neighbours (change it.)
+                    model.fit(train_set, train_set_labels)
+                    prediction = model.predict(test_set)
+                    kn_precision += precision_score(test_set_labels, prediction)
+                    kn_recall += recall_score(test_set_labels, prediction)
+                    kn_area += roc_auc_score(test_set_labels, prediction)
+
+                    model = DecisionTreeClassifier()
+                    prediction = model.fit(train_set, train_set_labels).predict(test_set)
+                    dt_precision += precision_score(test_set_labels, prediction)
+                    dt_recall += recall_score(test_set_labels, prediction)
+                    dt_area += roc_auc_score(test_set_labels, prediction)
+
+                    # for l in range(len(neighbors)):
+                    #     kn = KNeighborsClassifier(n_neighbors=neighbors[l])
+                    #     model.fit(train_set, train_set_labels)
+                    #     prediction = model.predict(test_set)
+                    #     kn_local[0, l] += precision_score(test_set_labels, prediction)
+                    #     kn_local[1, l] += recall_score(test_set_labels, prediction)
+                    #     # try:
+                    #     kn_local[2, l] += roc_auc_score(test_set_labels, prediction)
+                    #     # except:
+                    #     kn_local[2, l] += 0
+                avgs[0][0].append(majority_precision/j)
+                avgs[0][1].append(majority_recall/j)
+                avgs[0][2].append(majority_area/j)
+
+                avgs[1][0].append(bayes_precision/j)
+                avgs[1][1].append(bayes_recall/j)
+                avgs[1][2].append(bayes_area/j)
+
+                avgs[2][0].append(kn_precision/j)
+                avgs[2][1].append(kn_recall/j)
+                avgs[2][2].append(kn_area/j)
+
+                avgs[3][0].append(dt_precision/j)
+                avgs[3][1].append(dt_recall/j)
+                avgs[3][2].append(dt_area/j)
+                # for q in range(kn_local.shape[0]):
+                #     for k in range(kn_local.shape[1]):
+                #         kn_users[q, k] += kn_local[q, k]/j
+                        # print kn_local[q, k]/j,
+                    # print
+            except:
+                pass
+            break
+        for i in avgs:
+            print "t = ", t,
+            for j in i:
+                try:
+                    print sum(j)/len(j),
+                except:
+                    print 0,
+            print
+        break
+            #     user -= 1
+            # user += 1
+            # break
+        # print "altogether:", user
+        # for i in range(kn_users.shape[0]):
+        #     for j in range(kn_users.shape[1]):
+        #         kn_users[i, j] = kn_users[i,j]/user
+        # kn_all.append(kn_users)
+        # break
+    # for i in kn_all:
+    #     plt.figure()
+    #     for j in kn_all:
+    #         # print len(j), len(neighbors)
+    #         plt.plot(np.array(neighbors), np.array(j[0]), label="Precision")
+    #         plt.plot(np.array(neighbors), np.array(j[1]), label="Recall")
+    #         plt.plot(np.array(neighbors), np.array(j[2]), label="ROC")
+    #     plt.legend()
+    #     plt.show()
+
+def getNeighbours():
+    kn_all = []
+    neighbors = [1, 2, 3, 5, 10, 20, 40, 60, 80, 100]
+    kn_users = np.zeros((3, len(neighbors)))
+    tau = [2, 3, 4]
+    for t in tau:
+        kn_users = np.zeros((3, len(neighbors)))
+        user = 0
+
+        for i in range(U.shape[0]):
+            X = np.hstack([D[:i, :].T, D[i+1:, :].T])   # Attributes are all other users
+            y = np.hstack([D[i, :]])  # Class labels are movie ratings of user 301
+            index_set = np.where(y > 0)[0]  # Select only the movies that user watched
+            X = X[index_set, :]     # Training data - attributes
+            y = y[index_set]     # Training data - class labels
+            print user
+            try:
+                split = StratifiedShuffleSplit(y, test_size=0.1, train_size=0.9)
+                y = y > t
+                kn_local = np.zeros((3, len(neighbors)))
+                j = 0
+                for train_indice, test_indice in split:
+                    j += 1
+                    train_set = X[train_indice, :]
+                    train_set_labels = y[train_indice]
+                    test_set = X[test_indice, :]
+                    test_set_labels = y[test_indice]
+                    for l in range(len(neighbors)):
+                        kn = KNeighborsClassifier(n_neighbors=neighbors[l])
+                        kn.fit(train_set, train_set_labels)
+                        prediction = kn.predict(test_set)
+                        kn_local[0, l] += precision_score(test_set_labels, prediction)
+                        kn_local[1, l] += recall_score(test_set_labels, prediction)
+                        try:
+                            kn_local[2, l] += roc_auc_score(test_set_labels, prediction)
+                        except:
+                            kn_local[2, l] = 0
+                for q in range(kn_local.shape[0]):
+                    for k in range(kn_local.shape[1]):
+                        kn_users[q, k] += kn_local[q, k]/j
+            except:
+                user -=1
+            user += 1
+            # break
+        print "altogether:", user
+        for i in range(kn_users.shape[0]):
+            for j in range(kn_users.shape[1]):
+                kn_users[i, j] = kn_users[i,j]/user
+        kn_all.append(kn_users)
+        # break
+    printData(kn_all)
+    for i in kn_all:
+        plt.figure()
+        # print len(j), len(neighbors)
+        plt.plot(np.array(neighbors), np.array(i[0]), label="Precision")
+        plt.plot(np.array(neighbors), np.array(i[1]), label="Recall")
+        plt.plot(np.array(neighbors), np.array(i[2]), label="ROC")
+        plt.legend()
+        plt.show()
 
 
+start = time.clock()
+getNeighbours()
+# getClasses()
+print time.clock() - start
 # Sample code: PART 1
 # Prediction of whether the user likes a movie or not (class), based on all other users
 #   All other users are now considered as 'attributes' of the classification problem.
-i = 0     # Randomly choose a user on index 302
-tau = [2, 3, 4]
-for t in tau:
-    avgs = [
-        [[], [], []],
-        [[], [], []],
-        [[], [], []],
-        [[], [], []]
-    ]
-    for i in range(U.shape[0]):
-        X = np.hstack([D[:i, :].T, D[i+1:, :].T])   # Attributes are all other users
-        y = np.hstack([D[i, :]])  # Class labels are movie ratings of user 301
-        index_set = np.where(y > 0)[0]  # Select only the movies that user watched
-        X = X[index_set, :]     # Training data - attributes
-        y = y[index_set]     # Training data - class labels
-        try:
-            split = StratifiedShuffleSplit(y, test_size=0.1, train_size=0.9)
-            # Set threshold to convert rating to two classes;
-            # Ratings > tau are considered as "Like" (class 1) and otherwise as "Unlike" (class 0)
-            y = y > t
-            j = 0
-            majority_precision = 0
-            majority_recall = 0
-            majority_area = 0
 
-            bayes_precision = 0
-            bayes_recall = 0
-            bayes_area = 0
 
-            kn_precision = 0
-            kn_recall = 0
-            kn_area = 0
 
-            dt_precision = 0
-            dt_recall = 0
-            dt_area = 0
-            for train_indice, test_indice in split:
-                j += 1
-                # Sample usage of models
-                train_set = X[train_indice, :]
-                train_set_labels = y[train_indice]
-                test_set = X[test_indice, :]
-                test_set_labels = y[test_indice]
-
-                model = Majority()
-                model.fit(train_set, train_set_labels)                 # Train model on all data
-                prediction = model.predict(test_set)   # Predict the same training data
-                majority_precision += precision_score(test_set_labels, prediction)   # Measure precision score
-                majority_recall += recall_score(test_set_labels, prediction)   # Measure precision score
-                majority_area += roc_auc_score(test_set_labels, prediction)   # Measure precision score
-
-                model = GaussianNB()
-                prediction = model.fit(train_set, train_set_labels).predict(test_set)
-                bayes_precision += precision_score(test_set_labels, prediction)
-                bayes_recall += recall_score(test_set_labels, prediction)
-                bayes_area += roc_auc_score(test_set_labels, prediction)
-
-                model = KNeighborsClassifier() # 5 neighbours (change it.)
-                model.fit(train_set, train_set_labels)
-                prediction = model.predict(test_set)
-                kn_precision += precision_score(test_set_labels, prediction)
-                kn_recall += recall_score(test_set_labels, prediction)
-                kn_area += roc_auc_score(test_set_labels, prediction)
-
-                model = DecisionTreeClassifier() # 5 neighbours (change it.)
-                prediction = model.fit(train_set, train_set_labels).predict(test_set)
-                dt_precision += precision_score(test_set_labels, prediction)
-                dt_recall += recall_score(test_set_labels, prediction)
-                dt_area += roc_auc_score(test_set_labels, prediction)
-
-            avgs[0][0].append(majority_precision/j)
-            avgs[0][1].append(majority_recall/j)
-            avgs[0][2].append(majority_area/j)
-
-            avgs[1][0].append(bayes_precision/j)
-            avgs[1][1].append(bayes_recall/j)
-            avgs[1][2].append(bayes_area/j)
-
-            avgs[2][0].append(kn_precision/j)
-            avgs[2][1].append(kn_recall/j)
-            avgs[2][2].append(kn_area/j)
-
-            avgs[3][0].append(dt_precision/j)
-            avgs[3][1].append(dt_recall/j)
-            avgs[3][2].append(dt_area/j)
-        except:
-            pass
-            # avgs[0].append(0)
-            # avgs[1].append(0)
-            # avgs[2].append(0)
-    for i in avgs:
-        print "t = ", t,
-        for j in i:
-            try:
-                print sum(j)/len(j),
-            except:
-                print 0,
-        print
-    print
 # #######################
 # # Sample code: PART 2 #
 # #######################

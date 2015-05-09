@@ -217,48 +217,48 @@ if __name__ == '__main__':
     print "I", I.shape
     print "D", D.shape
     print "C", C.shape
-    pool = Pool(processes=20)
+    # pool = Pool(processes=20)
     start = time.clock()
     # getNeighbours(2)
-    pool.map(getClasses, range(2, 5))
-    pool.map(getNeighbours, range(2, 5))
+    # pool.map(getClasses, range(2, 5))
+    # pool.map(getNeighbours, range(2, 5))
     # getClasses(2)
-    print "time = ", time.clock() - start
+    # print "time = ", time.clock() - start
 
 
-# #######################
-# # Sample code: PART 2 #
-# #######################
-# # Classification of users; separation between occupations.
-# # How well can we separate eg. scientists and salesmen based on movie ratings?
-# # Build classifier for each pair of jobs
-# # Exclude 'none' and 'other'
-# jobs = sorted(list(set([str(u["occupation"]) for u in Utab])))
-# jobs.remove("none")
-# jobs.remove("other")
-#
-# j1 = "scientist"
-# j2 = "salesman"
-# inxs1 = map(lambda e: e[0], filter(lambda e: str(e[1]["occupation"]) == j1, enumerate(Utab)))
-# inxs2 = map(lambda e: e[0], filter(lambda e: str(e[1]["occupation"]) == j2, enumerate(Utab)))
-# X = D[inxs1+inxs2, :]                                # Select appropriate indices
-# y = np.array(len(inxs1) * [0] + len(inxs2) * [1])    # Assign users to two classes
-#
-# # Select top 200 viewed movies for the pair of users' types
-# top_movie_inxs = np.argsort((X > 0).sum(axis=0))[::-1][:200]
-# X = X[:, top_movie_inxs]
-#
-#
-# # Train a decision tree and export tree graph in .dot format
-# # To draw, install
-# #       http://www.graphviz.org/
-# #   and run:
-# #       dot -Tpdf jobs.dot -o graph.pdf
-# model = DecisionTreeClassifier()
-# model.fit(X, y)
-# with open("jobs.dot", 'w') as f:
-#     export_graphviz(model, out_file=f, feature_names=map(str, [Dtab.domain.attributes[mi].name for mi in top_movie_inxs]))
+    #######################
+    # Sample code: PART 2 #
+    #######################
+    # Classification of users; separation between occupations.
+    # How well can we separate eg. scientists and salesmen based on movie ratings?
+    # Build classifier for each pair of jobs
+    # Exclude 'none' and 'other'
+    jobs = sorted(list(set([str(u["occupation"]) for u in Utab])))
+    jobs.remove("none")
+    jobs.remove("other")
+    comb = combinations(range(len(jobs)), 2)
+    for c in comb:
+        j1 = jobs[c[0]]
+        j2 = jobs[c[1]]
+        inxs1 = map(lambda e: e[0], filter(lambda e: str(e[1]["occupation"]) == j1, enumerate(Utab)))
+        inxs2 = map(lambda e: e[0], filter(lambda e: str(e[1]["occupation"]) == j2, enumerate(Utab)))
+        X = D[inxs1+inxs2, :]                                # Select appropriate indices
+        y = np.array(len(inxs1) * [0] + len(inxs2) * [1])    # Assign users to two classes
 
+        # Select top 200 viewed movies for the pair of users' types
+        top_movie_inxs = np.argsort((X > 0).sum(axis=0))[::-1][:200]
+        X = X[:, top_movie_inxs]
+
+
+        # Train a decision tree and export tree graph in .dot format
+        # To draw, install
+        #       http://www.graphviz.org/
+        #   and run:
+        #       dot -Tpdf jobs.dot -o graph.pdf
+        model = DecisionTreeClassifier()
+        model.fit(X, y)
+        with open("../pdfs/" + j1 + "_" + j2 +".dot", 'w') as f:
+            export_graphviz(model, out_file=f, feature_names=map(str, [Dtab.domain.attributes[mi].name for mi in top_movie_inxs]))
 
 
 

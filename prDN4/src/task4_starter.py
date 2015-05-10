@@ -15,6 +15,7 @@ from itertools import combinations, count
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import StratifiedShuffleSplit
 from sklearn.metrics import roc_auc_score, precision_score, recall_score
 
@@ -63,6 +64,7 @@ def getClasses(t):
         [[], [], []],
         [[], [], []],
         [[], [], []],
+        [[], [], []],
         [[], [], []]
     ]
     user = 0
@@ -91,6 +93,10 @@ def getClasses(t):
             dt_precision = 0
             dt_recall = 0
             dt_area = 0
+
+            rf_precision = 0
+            rf_recall = 0
+            rf_area = 0
             j = 0
             for train_indice, test_indice in split:
                 j += 1
@@ -124,6 +130,12 @@ def getClasses(t):
                 dt_precision += precision_score(test_set_labels, prediction)
                 dt_recall += recall_score(test_set_labels, prediction)
                 dt_area += roc_auc_score(test_set_labels, prediction)
+
+                model = RandomForestClassifier()
+                prediction = model.fit(train_set, train_set_labels).predict(test_set)
+                rf_precision += precision_score(test_set_labels, prediction)
+                rf_recall += recall_score(test_set_labels, prediction)
+                rf_area += roc_auc_score(test_set_labels, prediction)
             avgs[0][0].append(majority_precision/j)
             avgs[0][1].append(majority_recall/j)
             avgs[0][2].append(majority_area/j)
@@ -139,12 +151,17 @@ def getClasses(t):
             avgs[3][0].append(dt_precision/j)
             avgs[3][1].append(dt_recall/j)
             avgs[3][2].append(dt_area/j)
+
+            avgs[4][0].append(rf_precision/j)
+            avgs[4][1].append(rf_recall/j)
+            avgs[4][2].append(rf_area/j)
         except:
             pass
+        # print avgs
         # break
     sys.stdout = open("../data/data_class_t" + str(t), "w")
     pr = ["Precision", "Recall", "ROC"]
-    models = ["Majority", "Naive Bayes", "KNeighbors", "Decision Tree"]
+    models = ["Majority", "Naive Bayes", "KNeighbors", "Decision Tree", "Random forest"]
     print "t = ", t
     for i in pr:
         print "c",
@@ -156,7 +173,7 @@ def getClasses(t):
         print k,
         for j in i:
             try:
-                print "&", sum(j)/len(j),
+                print "& %f " % (sum(j)/len(j)),
             except:
                 print "&", 0,
         print "\\\\"
@@ -248,8 +265,8 @@ if __name__ == '__main__':
     pool = Pool(processes=20)
     start = time.clock()
     # getNeighbours(2)
-    # pool.map(getClasses, range(2, 5))
-    # pool.map(getNeighbours, range(2, 5))
+    pool.map(getClasses, range(2, 5))
+    pool.map(getNeighbours, range(2, 5))
     # getClasses(2)
     # print "time = ", time.clock() - start
 

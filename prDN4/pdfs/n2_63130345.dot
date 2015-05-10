@@ -1,0 +1,27 @@
+digraph Tree {
+0 [label="Patton (1970) <= 4.5000\ngini = 0.338331410996\nsamples = 51", shape="box"] ;
+1 [label="Postino, Il (1994) <= 4.5000\ngini = 0.25350837483\nsamples = 47", shape="box"] ;
+0 -> 1 ;
+2 [label="Good Will Hunting (1997) <= 3.5000\ngini = 0.197530864198\nsamples = 45", shape="box"] ;
+1 -> 2 ;
+3 [label="Apt Pupil (1998) <= 3.5000\ngini = 0.0973044049967\nsamples = 39", shape="box"] ;
+2 -> 3 ;
+4 [label="gini = 0.0000\nsamples = 35\nvalue = [  0.  35.]", shape="box"] ;
+3 -> 4 ;
+5 [label="Star Wars (1977) <= 2.5000\ngini = 0.5\nsamples = 4", shape="box"] ;
+3 -> 5 ;
+6 [label="gini = 0.0000\nsamples = 2\nvalue = [ 2.  0.]", shape="box"] ;
+5 -> 6 ;
+7 [label="gini = 0.0000\nsamples = 2\nvalue = [ 0.  2.]", shape="box"] ;
+5 -> 7 ;
+8 [label="L.A. Confidential (1997) <= 2.5000\ngini = 0.5\nsamples = 6", shape="box"] ;
+2 -> 8 ;
+9 [label="gini = 0.0000\nsamples = 3\nvalue = [ 3.  0.]", shape="box"] ;
+8 -> 9 ;
+10 [label="gini = 0.0000\nsamples = 3\nvalue = [ 0.  3.]", shape="box"] ;
+8 -> 10 ;
+11 [label="gini = 0.0000\nsamples = 2\nvalue = [ 2.  0.]", shape="box"] ;
+1 -> 11 ;
+12 [label="gini = 0.0000\nsamples = 4\nvalue = [ 4.  0.]", shape="box"] ;
+0 -> 12 ;
+}

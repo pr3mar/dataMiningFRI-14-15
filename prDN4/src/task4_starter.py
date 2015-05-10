@@ -330,5 +330,6 @@ if __name__ == '__main__':
     print max_area
     print matrix.shape
     printToTex(jobs, matrix)
+    #"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe" -Tpdf "C:\Users\pr3mar\PycharmProjects\dataMiningFRI-14-15\prDN4\pdfs\n1_63130345.dot" -o "C:\Users\pr3mar\PycharmProjects\dataMiningFRI-14-15\prDN4\pdfs\n2_63130345.pdf"
     with open("../pdfs/n2_63130345.dot", 'w') as f:
         export_graphviz(max_model, out_file=f, feature_names=map(str, [Dtab.domain.attributes[mi].name for mi in max_top]))

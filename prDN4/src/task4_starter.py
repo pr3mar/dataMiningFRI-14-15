@@ -11,7 +11,7 @@ import Orange, time
 from multiprocessing import Pool
 import numpy as np
 import matplotlib.pyplot as plt
-from itertools import combinations
+from itertools import combinations, count
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.neighbors import KNeighborsClassifier
@@ -141,16 +141,25 @@ def getClasses(t):
             avgs[3][2].append(dt_area/j)
         except:
             pass
-        break
+        # break
     sys.stdout = open("../data/data_class_t" + str(t), "w")
-    for i in avgs:
-        print "t = ", t,
+    pr = ["Precision", "Recall", "ROC"]
+    models = ["Majority", "Naive Bayes", "KNeighbors", "Decision Tree"]
+    print "t = ", t
+    for i in pr:
+        print "c",
+    print
+    for i in pr:
+        print "&", i,
+    print "\\\\"
+    for (i, k) in zip(avgs, models):
+        print k,
         for j in i:
             try:
-                print sum(j)/len(j),
+                print "&", sum(j)/len(j),
             except:
-                print 0,
-        print
+                print "&", 0,
+        print "\\\\"
     sys.stdout = sys.__stdout__
 
 def getNeighbours(t):
@@ -211,13 +220,32 @@ def getNeighbours(t):
     plt.legend()
     plt.show()
 
+def printToTex(jobs, matrix):
+    print "\\begin{tabular}{c |",
+    for row in range(matrix.shape[0]):
+        print "c",
+    print "}"
+    print "& "
+    for row in range(matrix.shape[0]):
+        print "\\rotatebox{90}{" + jobs[row] + "} &",
+    print "\\\\"
+    for row in range(matrix.shape[0]):
+        print jobs[row],
+        for column in range(matrix.shape[1]):
+            if matrix[row, column] != 0:
+                print "& %.3f" % (matrix[row, column]),
+            else:
+                print " &",
+        print "\\\\"
+    print "\\end{tabular}"
+
 if __name__ == '__main__':
     # Load data tables
     print "U", U.shape
     print "I", I.shape
     print "D", D.shape
     print "C", C.shape
-    # pool = Pool(processes=20)
+    pool = Pool(processes=20)
     start = time.clock()
     # getNeighbours(2)
     # pool.map(getClasses, range(2, 5))
@@ -237,7 +265,13 @@ if __name__ == '__main__':
     jobs.remove("none")
     jobs.remove("other")
     comb = combinations(range(len(jobs)), 2)
+    max_area = [0, "", ""]
+    # fac = lambda n: 1 if n < 2 else n * fac(n - 1)
+    # combos = lambda n, k: fac(n) / fac(k) / fac(n - k)
+    N = len(jobs)
+    matrix = np.zeros((N, N))
     for c in comb:
+        # print "YEY"
         j1 = jobs[c[0]]
         j2 = jobs[c[1]]
         inxs1 = map(lambda e: e[0], filter(lambda e: str(e[1]["occupation"]) == j1, enumerate(Utab)))
@@ -249,16 +283,35 @@ if __name__ == '__main__':
         top_movie_inxs = np.argsort((X > 0).sum(axis=0))[::-1][:200]
         X = X[:, top_movie_inxs]
 
-
-        # Train a decision tree and export tree graph in .dot format
-        # To draw, install
-        #       http://www.graphviz.org/
-        #   and run:
-        #       dot -Tpdf jobs.dot -o graph.pdf
-        model = DecisionTreeClassifier()
-        model.fit(X, y)
-        with open("../pdfs/" + j1 + "_" + j2 +".dot", 'w') as f:
-            export_graphviz(model, out_file=f, feature_names=map(str, [Dtab.domain.attributes[mi].name for mi in top_movie_inxs]))
-
-
-
+        split = StratifiedShuffleSplit(y, test_size=0.1, train_size=0.9)
+        roc_area = 0
+        j = 0
+        for train_indices, test_indices in split:
+            train_set = X[train_indices, :]
+            train_set_labels = y[train_indices]
+            test_set = X[test_indices, :]
+            test_set_labels = y[test_indices]
+            model = DecisionTreeClassifier()
+            model.fit(train_set, train_set_labels)
+            prediction = model.predict(test_set)
+            roc_area += roc_auc_score(test_set_labels, prediction)
+            j += 1
+        roc_area /= j
+        matrix[c[1], c[0]] = roc_area
+        # print j1, j2, roc_area
+        if max_area[0] < roc_area:
+            max_area[0] = roc_area
+            max_area[1] = jobs[c[0]]
+            max_area[2] = jobs[c[1]]
+            max_top = top_movie_inxs
+            max_model = model
+    # Train a decision tree and export tree graph in .dot format
+    # To draw, install
+    #       http://www.graphviz.org/
+    #   and run:
+    #       dot -Tpdf jobs.dot -o graph.pdf
+    print max_area
+    print matrix.shape
+    printToTex(jobs, matrix)
+    with open("../pdfs/n2_63130345.dot", 'w') as f:
+        export_graphviz(max_model, out_file=f, feature_names=map(str, [Dtab.domain.attributes[mi].name for mi in max_top]))
